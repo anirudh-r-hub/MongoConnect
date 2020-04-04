@@ -21,10 +21,10 @@ public class MongoConnection extends AsyncTask<Void, Void, ArrayList<JSONObject>
     @Override
     protected void onPostExecute(ArrayList<JSONObject> strings) {
         super.onPostExecute(strings);
-        for(int i=0;i<strings.size();i++)
+        /*for(int i=0;i<strings.size();i++)
         {
             Toast.makeText(context,"no:"+(i+1)+": "+strings.get(i).toString(), Toast.LENGTH_LONG).show();
-        }
+        }*/
 
     }
 

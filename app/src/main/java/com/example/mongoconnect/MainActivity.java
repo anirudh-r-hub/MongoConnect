@@ -4,10 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
@@ -36,8 +44,10 @@ import static java.util.Arrays.asList;
 public class MainActivity extends AppCompatActivity {
     EditText editText;
     BarChart barChart;
+    String[] dates=new String[100];
+    ArrayList<BarEntry> yValues = new ArrayList<>();
     String name;
-    int switched_on_time=0,units_consumed=0;
+    int switched_on_time=0,units_consumed=0,k=0;
     ArrayList<JSONObject>jsonObjects;
     ArrayList<String>collection_names=new ArrayList<>();
     @Override
@@ -52,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         barChart.setFitBars(true);
-        //editText.setText("List of collections wil be displayed in the form of toast messages");
         MongoConnection mongoConnection = new MongoConnection(getApplicationContext());
         try {
             jsonObjects = mongoConnection.execute(new Void[0]).get();
@@ -61,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         {
 
         }
-        Toast.makeText(this,"hello",Toast.LENGTH_LONG).show();
+
 
 
 
@@ -85,32 +94,29 @@ public class MainActivity extends AppCompatActivity {
 
     public void show(View view)
     {
-        //Toast.makeText(this,"Plotting data",Toast.LENGTH_LONG).show();
-        int time_stamp_end=0,count=0,time_stamp_start=0;
-        int user_entered_day=Integer.parseInt(editText.getText().toString());
         switched_on_time=0;
+        yValues.clear();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-mm-dd");
+        k=1;
         units_consumed=0;
         for(int i=0;i<jsonObjects.size();i++)
         {
             try {
-                time_stamp_end = Integer.parseInt(jsonObjects.get(i).getString("end"));
-                time_stamp_start = Integer.parseInt(jsonObjects.get(i).getString("start"));
-                int topic=Integer.parseInt(jsonObjects.get(i).getString("topic"));
-                int day_of_month_end=check_timestamp_range(time_stamp_end);
-                int day_of_month_start=check_timestamp_range(time_stamp_start);
+                String date=jsonObjects.get(i).getJSONObject("_id").getString("Date");
+                Date xyz=simpleDateFormat.parse(date);
+
+                Date from=simpleDateFormat.parse("1970-01-01");
+                Date to=simpleDateFormat.parse("1970-01-08");
+
                 int start=0,end=0,watt=0;
 
-                //Toast.makeText(this,"Plotting data",Toast.LENGTH_LONG).show();
-                if(day_of_month_end==user_entered_day && day_of_month_start==user_entered_day && topic==1001) {
-                    count++;
-                    //Toast.makeText(this,""+end,Toast.LENGTH_LONG).show();
-                    start=jsonObjects.get(i).getInt("start");
-                    end=jsonObjects.get(i).getInt("end");
-                    watt=jsonObjects.get(i).getInt("watt");
-                    switched_on_time+=(end-start);
-                    //Toast.makeText(this,""+(end-start),Toast.LENGTH_LONG).show();
-                    units_consumed+=(watt)*((end-start)/3600);
-
+                if(xyz.compareTo(from)>=0 && xyz.compareTo(to)<=0) {
+                    watt=jsonObjects.get(i).getInt("count");
+                    //Toast.makeText(this,date,Toast.LENGTH_LONG).show();
+                    yValues.add(new BarEntry(k,(float)watt));
+                    dates[k-1]=date;
+                    //Toast.makeText(this,"X: "+yValues.get(k-1).getX(),Toast.LENGTH_LONG).show();
+                    k++;
                 }
 
 
@@ -119,33 +125,61 @@ public class MainActivity extends AppCompatActivity {
             catch(Exception e){}
             }
             plot_data();
-        //Toast.makeText(this,"count: "+count,Toast.LENGTH_LONG).show();
 
     }
 
+
     private void plot_data() {
-
-        switched_on_time=switched_on_time/3600;
-        ArrayList<BarEntry> yValues = new ArrayList<>();
-
-        yValues.add(new BarEntry(switched_on_time,units_consumed));
-
-
-        BarDataSet barDataSet = new BarDataSet(yValues,"Data Set");
+        XAxis xAxis=barChart.getXAxis();
+        Toast.makeText(this,"length"+yValues.size(),Toast.LENGTH_LONG).show();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        BarDataSet barDataSet = new BarDataSet(yValues, "Data Set");
         barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setDrawValues(true);
         BarData data = new BarData(barDataSet);
-
+        data.setValueFormatter(new MyValueFormatter());
+        xAxis.setValueFormatter(new MyAxisValueFormatter(dates));
+        xAxis.setTextSize(0.5f);
         barChart.setData(data);
         barChart.invalidate();
+        barChart.setFitBars(true);
+        barChart.animateXY(500, 3500, Easing.EasingOption.EaseInBounce, Easing.EasingOption.EaseInBounce);
+    }
 
-        // barChart.animateY(2500, Easing.EasingOption.EaseInBounce);
-        // barChart.animateX(1500,Easing.EasingOption.EaseInBounce);
-        barChart.animateXY(2500,4500, Easing.EasingOption.EaseInBounce,Easing.EasingOption.EaseInBounce);
+    private class MyValueFormatter implements IValueFormatter
+    {
 
+        @Override
+        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+            return String.valueOf(value);
+        }
+    }
 
+    private class MyAxisValueFormatter implements IAxisValueFormatter
+    {
+        String[]names=new String[100];
+        public MyAxisValueFormatter(String[]arr)
+        {
+            this.names=arr;
+        }
 
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+
+            if (value <=yValues.size())
+            {
+                for (float i = 1.0f; i < yValues.size()+1.0f; i += 1.0f)
+                {
+                    if (value == i)
+                        return names[(int) (i-1)];
+                }
+            }
+            return "";
+        }
     }
 
 
+
 }
+
+

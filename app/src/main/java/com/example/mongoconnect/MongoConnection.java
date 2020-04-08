@@ -18,7 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MongoConnection extends AsyncTask<Void, Void, ArrayList<JSONObject>> {
+public class MongoConnection extends AsyncTask<String, Void, ArrayList<JSONObject>> {
     @Override
     protected void onPostExecute(ArrayList<JSONObject> strings) {
         super.onPostExecute(strings);
@@ -44,30 +44,31 @@ public class MongoConnection extends AsyncTask<Void, Void, ArrayList<JSONObject>
     }
 
     @Override
-    protected ArrayList<JSONObject> doInBackground(Void... voids) {
-        MongoClient mongoClient = MongoClients.create("mongodb://192.168.225.226:27017");
+    protected ArrayList<JSONObject> doInBackground(String... DeviceName) {
+        MongoClient mongoClient = MongoClients.create("mongodb://192.168.43.43:27017");
         MongoDatabase database = mongoClient.getDatabase("mongotest");
         //database.createCollection("bhagwan");
-        int k = 1;
+
         /*for (String name1 : database.listCollectionNames()) {
             collection_names.add(name1);
         }*/
 
 
+
         MongoCollection<Document> collection = database.getCollection("statistics");
         ArrayList<JSONObject> devices_list = new ArrayList<>();
+
         BasicDBObject query=new BasicDBObject();
-        query.put("_id.type","fan");
+        query.put("_id.type",DeviceName[0]);
 
         MongoCursor<Document> cur = collection.find(query).iterator();
-        int z=1;
+
         while (cur.hasNext()) {
             Document doc = cur.next();
             try {
                 JSONObject jsonObject = new JSONObject(doc.toJson());
                 devices_list.add(jsonObject);
-                System.err.println(""+z+": "+jsonObject);
-                z++;
+
             }catch(Exception e){}
 
 

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MongoConnect</string>
+    <string-array name="DateOption">
+        <item>SELECT FROM DATE</item>
+        <item>SELECT TO DATE</item>
+    </string-array>
 </resources>

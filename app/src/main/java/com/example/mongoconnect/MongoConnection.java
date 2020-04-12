@@ -47,7 +47,7 @@ public class MongoConnection extends AsyncTask<String, Void, ArrayList<JSONObjec
     protected ArrayList<JSONObject> doInBackground(String... DeviceName) {
         MongoClient mongoClient = MongoClients.create("mongodb://192.168.43.43:27017");
         MongoDatabase database = mongoClient.getDatabase("mongotest");
-        //database.createCollection("bhagwan");
+
 
         /*for (String name1 : database.listCollectionNames()) {
             collection_names.add(name1);

@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //####################################################################################
         final MongoConnection mongoConnection = new MongoConnection(getApplicationContext());
         try {
-            String Device_name = "tubelight";
+            String Device_name = "iron";
             jsonObjects = mongoConnection.execute(Device_name).get();
         }
         catch(Exception e)
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Date from=simpleDateFormat.parse(FromDate);
                 Date to=simpleDateFormat.parse(ToDate);
 
-                int watt=0;
+                float watt=0;
 
                 if(from.compareTo(to)>0)
                 {
@@ -198,8 +198,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
 
                 if(FetchedDate.compareTo(from)>=0 && FetchedDate.compareTo(to)<=0) {
-                    watt=jsonObjects.get(i).getInt("count");
-                    yValues.add(new BarEntry(k,(float)watt));
+                    watt=(float)jsonObjects.get(i).getDouble("units");
+                    yValues.add(new BarEntry(k,(float) watt));
                     dates[k-1]=date;
                     k++;
                 }
@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                }
             catch(Exception e){}
             }
+
             plot_data();
 
     }
@@ -223,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         data.setValueFormatter(new MyValueFormatter());
         xAxis.setValueFormatter(new MyAxisValueFormatter(dates));
         xAxis.setTextSize(0.5f);
+        xAxis.setLabelRotationAngle(90);
         barChart.setData(data);
         barChart.invalidate();
         barChart.setFitBars(true);

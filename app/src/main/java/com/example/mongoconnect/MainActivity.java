@@ -25,6 +25,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.connection.ClusterSettings;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -68,13 +69,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button DatePicker;
     Spinner DatePicker2;
     TextView DateFrom,DateTo;
-
+    Button button_pie;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        button_pie = (Button) findViewById(R.id.piechart);
+        button_pie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openPieActivity();
+            }
+        });
+
 //####################################################################################
         barChart=(BarChart)findViewById(R.id.BarChart1);
         barChart.getDescription().setEnabled(false);
@@ -146,6 +156,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         };
 //##################################################################################################
 
+    }
+
+    public void openPieActivity() {
+        Intent intent = new Intent(this, PieActivity.class);
+        startActivity(intent);
     }
 
 //##################################################################################################

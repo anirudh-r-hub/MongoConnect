@@ -45,7 +45,7 @@ public class MongoConnection extends AsyncTask<String, Void, ArrayList<JSONObjec
 
     @Override
     protected ArrayList<JSONObject> doInBackground(String... DeviceName) {
-        MongoClient mongoClient = MongoClients.create("mongodb://192.168.43.43:27017");
+        MongoClient mongoClient = MongoClients.create("mongodb://172.31.112.176:27017");
         MongoDatabase database = mongoClient.getDatabase("mongotest");
 
 
@@ -62,6 +62,10 @@ public class MongoConnection extends AsyncTask<String, Void, ArrayList<JSONObjec
         query.put("_id.type",DeviceName[0]);
 
         MongoCursor<Document> cur = collection.find(query).iterator();
+
+        if(DeviceName[0] == "")
+            cur = collection.find().iterator();
+
 
         while (cur.hasNext()) {
             Document doc = cur.next();

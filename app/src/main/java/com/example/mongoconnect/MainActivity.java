@@ -77,13 +77,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*button_pie = (Button) findViewById(R.id.piechart);
+        button_pie = (Button) findViewById(R.id.piechart);
         button_pie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openPieActivity();
             }
-        });*/
+        });
 
         Intent intent = new Intent(MainActivity.this,LineChartVis.class);
         startActivity(intent);
@@ -161,10 +161,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    /*public void openPieActivity() {
+    public void openPieActivity() {
         Intent intent = new Intent(this, PieActivity.class);
         startActivity(intent);
-    }*/
+    }
 
 //##################################################################################################
     @Override

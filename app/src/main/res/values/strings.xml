@@ -4,4 +4,18 @@
         <item>SELECT FROM DATE</item>
         <item>SELECT TO DATE</item>
     </string-array>
+    <string-array name="MonthOptions">
+        <item>JAN</item>
+        <item>FEB</item>
+        <item>MAR</item>
+        <item>APR</item>
+        <item>MAY</item>
+        <item>JUNE</item>
+        <item>JULY</item>
+        <item>AUG</item>
+        <item>SEP</item>
+        <item>OCT</item>
+        <item>NOV</item>
+        <item>DEC</item>
+    </string-array>
 </resources>

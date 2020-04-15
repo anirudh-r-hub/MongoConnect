@@ -18,4 +18,6 @@
         <item>NOV</item>
         <item>DEC</item>
     </string-array>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
 </resources>
